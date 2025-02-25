@@ -1,48 +1,42 @@
+import * as S from "./styles/style";
+
 import { useEffect, useState } from "react";
 
 const App = () => {
-  const [color, setColor] = useState<"red" | "green">("red");
+  const [isGreen, setIsGreen] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [reactionTime, setReactionTime] = useState<number | null>(null);
 
   useEffect(() => {
     const randomTime = Math.floor(3000 + Math.random() * 3001);
     const timer = setTimeout(() => {
-      setColor("green");
+      setIsGreen(true);
       setStartTime(Date.now());
     }, randomTime);
 
     return () => clearTimeout(timer);
-  }, [color]);
+  }, [isGreen]);
 
   const handleClick = () => {
-    if (color === "green" && startTime) {
+    if (isGreen === true && startTime) {
       const reaction = Date.now() - startTime;
       setReactionTime(reaction);
-      setColor("red");
+      setIsGreen(false);
     }
   };
 
   return (
-    <div>
-      <div
-        onClick={handleClick}
-        style={{
-          width: 200,
-          height: 200,
-          backgroundColor: color,
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "20px",
-          color: "#fff",
-        }}
-      >
-        {color === "red" ? "대기..." : "클릭!"}
-      </div>
-      {reactionTime !== null ? `반응속도: ${reactionTime}ms` : null}
-    </div>
+    <S.Container>
+      <S.Card>
+        <S.Title>반응 속도 테스트</S.Title>
+        <S.Instructions>초록색이 되면 최대한 빨리 클릭하세요!</S.Instructions>
+        <S.GameButton isGreen={isGreen} onClick={handleClick} />
+        {reactionTime && (
+          <S.ResultText>반응속도: {reactionTime}ms</S.ResultText>
+        )}
+        <S.ResultText></S.ResultText>
+      </S.Card>
+    </S.Container>
   );
 };
 
